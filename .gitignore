@@ -105,7 +105,7 @@ backend/*#
 backend/ssl
 backend/.idea
 backend/nbproject
-backend/public/uploads/*
+# backend/public/uploads/*
 !backend/public/uploads/.gitkeep
 
 ############################

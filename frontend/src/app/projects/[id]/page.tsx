@@ -1,5 +1,8 @@
-import Image from 'next/image';
+import React from 'react';
 import strapi_fetch from '@/util/strapi_fetch';
+import { GetStaticProps } from 'next';
+import { Project } from '@/util/types';
+import Image from 'next/image';
 
 type Project = {
   id: string;
@@ -16,13 +19,28 @@ type Project = {
   };
 };
 
-type Props = {
-  projects: Project[];
-};
+// export default function Page({ params }: { params: { id: string } }) {
+//   const projects = await strapi_fetch('projects?id=' + params.id);
+//   return <div>My Post: {params.id}</div>;
+// }
 
-export default async function Home() {
-  const projects = await strapi_fetch('projects?populate=*');
-  // console.log(projects);
+// export async function generateStaticParams({
+//   params,
+// }: {
+//   params: { id: string };
+// }) {
+//   // const posts = await fetch('https://.../posts').then((res) => res.json());
+//   const projects = await strapi_fetch('projects?id=' + params.id);
+//   return {
+//     props: {
+//       projects,
+//     },
+//   };
+// }
+
+// Return a list of params to populate the [slug] dynamic segment
+
+export default function Page({ params: { id } }: Params) {
   return (
     <div className="container mx-auto p-8">
       <h1 className="text-4xl font-bold mb-8">All Projects</h1>
@@ -53,12 +71,17 @@ export default async function Home() {
     </div>
   );
 }
-{
-  /* <pre>{JSON.stringify(projects, null, 2)}</pre>
-      {projects.forEach((project) => {
-        console.log(
-          'project',
-          project.attributes.ProjectImage.data[0].attributes.url,
-        );
-      })} */
+
+export async function generateStaticParams({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const projects = await strapi_fetch('projects?id=' + params.id);
+  return {
+    paths: projects.map((project) => ({
+      params: { id: project.id },
+    })),
+    fallback: false,
+  };
 }
